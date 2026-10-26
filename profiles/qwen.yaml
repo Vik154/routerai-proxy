@@ -1,0 +1,48 @@
+# Профиль для моделей Qwen: бюджетный, с предпочтением дешёвых провайдеров
+#
+# Источник данных: python -m proxy.cli providers qwen/qwen3.8-27b
+# Цены актуальны на момент создания профиля (26.10.2026).
+
+provider:
+  # Приоритет: самые дешёвые провайдеры с хорошим uptime
+  # tenstorrent  - 2.1  руб/1M (самый дешёвый)
+  # darkbloom    - 3.7  руб/1M
+  # chutes       - 4.1  руб/1M
+  # near-ai      - 4.2  руб/1M
+  # ionstream    - 4.2  руб/1M
+  order: ["tenstorrent", "darkbloom", "chutes", "near-ai", "ionstream"]
+  
+  # Чёрный список: дорогие и медленные провайдеры
+  # coreweave=41.9, novita=44, alibaba=44.5, venice=47.1, cloudflare=47.1, cerebras=103.7
+  ignore: ["coreweave", "novita", "alibaba", "venice", "cloudflare", "cerebras"]
+  
+  only: []
+  country: null  # Не ограничиваем по стране (дешёвые провайдеры в основном в US)
+  allow_fallbacks: true
+
+price_ceiling:
+  # Отсекаем всё дороже 25 руб/1M prompt
+  # Это автоматически исключит: coreweave, novita, alibaba, venice, cloudflare, cerebras
+  prompt_per_mtoken: 25
+  on_all_expensive: "warn"  # Предупреждаем, но не блокируем (Qwen модели относительно дешёвые)
+
+model_map:
+  # Удобные алиасы для Qwen семейства
+  "qwen3.8": "qwen/qwen3.8-27b"
+  "qwen27b": "qwen/qwen3.8-27b"
+  "my-qwen": "qwen/qwen3.8-27b"
+
+hide_over_ceiling: true  # В dropdown Cline будут только дешёвые модели
+
+# Model-specific overrides для разных размеров Qwen
+models:
+  "qwen/qwen3.8-27b":
+    provider:
+      # Для 27B модели предпочитаем провайдеров с поддержкой tools
+      order: ["tenstorrent", "chutes", "deepinfra"]
+      ignore: ["mancer", "cerebras"]  # mancer медленный, cerebras дорогой
+
+# Пример: другие настройки для маленькой модели
+# "qwen/qwen3.8-7b":
+#   price_ceiling:
+#     prompt_per_mtoken: 15  # для 7B можно строже

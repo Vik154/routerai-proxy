@@ -1,0 +1,35 @@
+# RouterAI Proxy — пример конфигурации
+# Скопируйте в config.yaml и настройте под себя.
+# config.yaml НЕ коммитится в git (см. .gitignore).
+# Профили находятся в директории profiles/
+
+routerai:
+  api_url: "https://routerai.ru/api/v1"
+  api_key_env: "ROUTERAI_API_KEY"   # имя env-переменной с ключом (сам ключ не хранить в файле!)
+
+server:
+  host: "127.0.0.1"   # ТОЛЬКО localhost по умолчанию: прокси подставляет твой ключ,
+                      # доступ из сети = твои деньги. Не меняй без нужды.
+  port: 8000
+  log_level: "info"   # debug | info | warning | error
+
+catalog:
+  models_ttl: 300      # TTL кэша списка моделей, сек
+  price_ttl: 3600      # TTL кэша цен endpoint'ов, сек
+  unknown_model: "reject"   # reject = 404 с did-you-mean | passthrough = пропустить как есть
+
+profile_selection:
+  method: "header"              # header | default_only
+  header_name: "X-Proxy-Profile"
+  default_profile: "default"
+  unknown_profile: "reject"     # reject = громкое 400 | fallback_default
+
+circuit_breaker:
+  failure_threshold: 5   # подряд 5xx/ошибок сети -> OPEN
+  recovery_timeout: 60   # сек до HALF_OPEN
+  success_threshold: 1   # успехов в HALF_OPEN -> CLOSED
+
+stats:
+  requests_log: "data/requests.jsonl"   # append-only история запросов
+  stats_snapshot: "data/stats.json"     # агрегаты, атомарный снапшот
+  flush_interval: 60                    # сек между снапшотами агрегатов

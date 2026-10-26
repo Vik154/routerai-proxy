@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Локальные секреты и данные — НЕ коммитим!
+.env
+config.yaml
+
+# Данные статистики
+data/*.jsonl
+data/*.json
+data/*.tmp
+
+# Логи
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

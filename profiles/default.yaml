@@ -1,0 +1,28 @@
+# Профиль по умолчанию: строгий и безопасный
+
+provider:
+  order: []
+  ignore: ["deepseek"]
+  only: []
+  country: null
+  allow_fallbacks: true
+
+price_ceiling:
+  prompt_per_mtoken: 30
+  on_all_expensive: "block"
+
+model_map:
+  "my-sonnet": "anthropic/claude-sonnet-4.5"
+  "my-gpt": "openai/gpt-4o"
+
+hide_over_ceiling: false
+
+# Model-specific overrides
+models:
+  "anthropic/claude-sonnet-4.5":
+    price_ceiling:
+      prompt_per_mtoken: 50  # Для Claude потолок выше
+  
+  "openai/gpt-4o":
+    provider:
+      ignore: ["deepseek", "google"]  # Для GPT-4o исключаем ещё и Google

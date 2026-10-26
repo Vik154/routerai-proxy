@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  routerai-proxy:
+    build: .
+    container_name: routerai-proxy
+    ports:
+      - "127.0.0.1:8000:8000"  # ТОЛЬКО localhost для безопасности
+    environment:
+      - ROUTERAI_API_KEY=${ROUTERAI_API_KEY}
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health').raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
